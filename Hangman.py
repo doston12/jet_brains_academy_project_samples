@@ -1,15 +1,25 @@
-# Stage 4/8 of the Hangman project
+# Stage 5/8 of the Hangman project
 import random
 
-print("H A N G M A N")
+print("H A N G M A N\n")
 answer = ('python', 'java', 'kotlin', 'javascript')
 
 random_index = random.randint(0, 3)
 random_answer = answer[random_index]
-x = random_answer[:3] + '-'*(len(random_answer)-3)
-word = input(f"Guess the word: {x}")
+hidden_answer = list('-'*len(random_answer))
 
-if answer[random_index] == word:
-    print("You survived!")
-else:
-    print("You are hanged!")
+for i in range(8):
+    print("".join(hidden_answer))
+    letter = input("Input a letter:")
+
+    if letter in random_answer:
+        index = random_answer.find(letter)
+        hidden_answer[index] = letter
+
+    else:
+        print("No such letter in the word")
+
+    print()
+
+print("Thanks for playing!")
+print("We'll see how well you did in the next stage")
