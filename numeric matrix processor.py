@@ -24,17 +24,58 @@ def add_matricies(matrix1, matrix2, rows, cols):
         res_matrix.append(temp)
     return res_matrix
 
+def multiply_matrix_by_constant(number, matrix, rows, cols):
+    print("The result is")
+    for i in range(rows):
+        for j in range(cols):
+            matrix[i][j] *= number
 
-matrix1_rows, matrix1_cols = map(int, input().split(' '))
-matrix1 = init_matrix(matrix1_rows)
+    return matrix
 
-matrix2_rows, matrix2_cols = map(int, input().split(' '))
-matrix2 = init_matrix(matrix2_rows)
+def print_menu():
+    print("1. Add matrices")
+    print("2. Multiply matrix by a constant")
+    print("3. Multiply matrices")
+    print("0. Exit")
 
 
-if matrix1_rows == matrix2_rows and matrix1_cols == matrix2_cols:
-    res_matrix = add_matricies(matrix1, matrix2, matrix1_rows, matrix1_cols)
-    print_matrix(res_matrix, matrix1_rows, matrix1_cols)
+while True:
+    print_menu()
+    user_option = int(input("Your choice: "))
 
-else:
-    print("ERROR")
+
+    if user_option == 1:
+        matrix1_rows, matrix1_cols = map(int, input("Enter size of first matrix: ").split(' '))
+        print("Enter first matrix:")
+        matrix1 = init_matrix(matrix1_rows)
+
+        matrix2_rows, matrix2_cols = map(int, input("Enter size of second matrix: ").split(' '))
+        print("Enter second matrix:")
+        matrix2 = init_matrix(matrix2_rows)
+
+        res_matrix = add_matricies(matrix1, matrix2, matrix1_rows, matrix1_cols)
+        print_matrix(res_matrix, matrix1_rows, matrix1_cols)
+
+    elif user_option == 2:
+        matrix1_rows, matrix1_cols = map(int, input("Enter size of second matrix: ").split(' '))
+        print("Enter matrix: ")
+
+        matrix1 = init_matrix(matrix1_rows)
+        number = int(input("Enter constant: "))
+
+        res_matrix = multiply_matrix_by_constant(number, matrix1, matrix1_rows, matrix1_cols)
+
+    elif user_option == 3:
+        matrix1_rows, matrix1_cols = map(int, input("Enter size of first matrix: ").split(' '))
+        print("Enter first matrix:")
+        matrix1 = init_matrix(matrix1_rows)
+
+        matrix2_rows, matrix2_cols = map(int, input("Enter size of second matrix: ").split(' '))
+        print("Enter second matrix:")
+        matrix2 = init_matrix(matrix2_rows)
+
+
+
+    elif user_option == 0:
+        break
+
