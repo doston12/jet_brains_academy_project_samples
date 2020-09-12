@@ -1,10 +1,11 @@
-# Solution for stage 1/6 of Numeric matrix processor project
+# Solution for stage 3/6 of Numeric matrix processor project
+# new comment line
 
 def init_matrix(rows):
     matrix = []
 
     for i in range(rows):
-        temp = list(map(int, input().split(' ')))
+        temp = list(map(float, input().split(' ')))
         matrix.append(temp)
 
     return matrix
@@ -14,6 +15,7 @@ def print_matrix(matrix, rows, cols):
         for j in range(cols):
             print(matrix[i][j], end=' ')
         print()
+    print()
 
 def add_matricies(matrix1, matrix2, rows, cols):
     res_matrix = []
@@ -31,6 +33,19 @@ def multiply_matrix_by_constant(number, matrix, rows, cols):
             matrix[i][j] *= number
 
     return matrix
+
+def multiply_matricies(matrix1, rows1, cols1, matrix2, cols2):
+    res_matrix = []
+    for i in range(rows1):
+        temp = []
+        for j in range(cols2):
+            x = 0
+            for k in range(cols1):
+                    x += matrix1[i][k] * matrix2[k][j]
+            temp.append(x)
+        res_matrix.append(temp)
+
+    return res_matrix
 
 def print_menu():
     print("1. Add matrices")
@@ -64,6 +79,7 @@ while True:
         number = int(input("Enter constant: "))
 
         res_matrix = multiply_matrix_by_constant(number, matrix1, matrix1_rows, matrix1_cols)
+        print_matrix(res_matrix, matrix1_rows, matrix1_cols)
 
     elif user_option == 3:
         matrix1_rows, matrix1_cols = map(int, input("Enter size of first matrix: ").split(' '))
@@ -74,7 +90,12 @@ while True:
         print("Enter second matrix:")
         matrix2 = init_matrix(matrix2_rows)
 
-
+        if matrix1_cols == matrix2_rows:
+            matrix = multiply_matricies(matrix1, matrix1_rows, matrix1_cols, matrix2, matrix2_cols)
+            print_matrix(matrix, matrix1_rows, matrix2_cols)
+        else:
+            print("The operation cannot be performed.")
+            print()
 
     elif user_option == 0:
         break
