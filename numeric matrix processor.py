@@ -1,4 +1,4 @@
-# Solution for stage 4/6 of Numeric matrix processor project
+# Solution for stage 6  /6 of Numeric matrix processor project
 
 def init_matrix(rows):
     matrix = []
@@ -13,7 +13,8 @@ def print_matrix(matrix, rows, cols):
     print("The result is: ")
     for i in range(rows):
         for j in range(cols):
-            print(matrix[i][j], end=' ')
+            x = round(matrix[i][j], 3)
+            print(f"{x}", end=' ')
         print()
     print()
 
@@ -54,7 +55,7 @@ def transpose_by_main_diagonal(matrix, rows, cols):
         for j in range(cols):
             res_matrix[i][j] = matrix[j][i]
 
-    print_matrix(res_matrix, rows, cols)
+    return res_matrix
 
 def transpose_by_side_diagonal(matrix, rows, cols):
     res_matrix = [[0 for i in range(cols)] for j in range(rows)]
@@ -80,13 +81,53 @@ def transpose_by_horizontal_line(matrix, rows, cols):
 
     print_matrix(res_matrix, rows, cols)
 
+def getMatrixMinor(m,i,j):
+    return [row[:j] + row[j+1:] for row in (m[:i]+m[i+1:])]
+
+def getMatrixDeternminant(m):
+    #base case for 2x2 matrix
+    if len(m) == 2:
+        return m[0][0]*m[1][1]-m[0][1]*m[1][0]
+
+    determinant = 0
+    for c in range(len(m)):
+        determinant += ((-1)**c)*m[0][c]*getMatrixDeternminant(getMatrixMinor(m,0,c))
+    return determinant
+
+def transposeMatrix(m):
+    return map(list,zip(*m))
+
+def getMatrixInverse(m, matrix1_rows, matrix1_cols):
+    determinant = getMatrixDeternminant(m)
+    #special case for 2x2 matrix:
+    if len(m) == 2:
+        return [[m[1][1]/determinant, -1*m[0][1]/determinant],
+                [-1*m[1][0]/determinant, m[0][0]/determinant]]
+
+    #find matrix of cofactors
+    cofactors = []
+    for r in range(len(m)):
+        cofactorRow = []
+        for c in range(len(m)):
+            minor = getMatrixMinor(m,r,c)
+            cofactorRow.append(((-1)**(r+c)) * getMatrixDeternminant(minor))
+        cofactors.append(cofactorRow)
+    cofactors = transpose_by_main_diagonal(cofactors, matrix1_rows, matrix1_cols)
+
+    for r in range(len(cofactors)):
+        for c in range(len(cofactors)):
+            cofactors[r][c] = cofactors[r][c]/determinant
+    return cofactors
+
+
 def print_menu():
     print("1. Add matrices")
     print("2. Multiply matrix by a constant")
     print("3. Multiply matrices")
     print("4. Transpose matrix")
+    print("5. Calculate a determinant")
+    print("6. Inverse matrix")
     print("0. Exit")
-
 
 
 while True:
@@ -145,7 +186,8 @@ while True:
         matrix1 = init_matrix(matrix1_rows)
 
         if user_choice == 1:
-            transpose_by_main_diagonal(matrix1, matrix1_rows, matrix1_cols)
+            mt = transpose_by_main_diagonal(matrix1, matrix1_rows, matrix1_cols)
+            print_matrix(mt, matrix1_rows, matrix1_cols)
         elif user_choice == 2:
             transpose_by_side_diagonal(matrix1, matrix1_rows, matrix1_cols)
         elif user_choice == 3:
@@ -153,6 +195,30 @@ while True:
         elif user_choice == 4:
             transpose_by_horizontal_line(matrix1, matrix1_rows, matrix1_cols)
 
+    elif user_option == 5:
+        matrix1_rows, matrix1_cols = map(int, input("Enter size of second matrix: ").split(' '))
+        print("Enter matrix: ")
+
+        matrix1 = init_matrix(matrix1_rows)
+        print("The result is:")
+
+        if matrix1_rows == 1 and matrix1_cols == 1:
+            print(matrix1[0][0])
+        else:
+            print(getMatrixDeternminant(matrix1))
+        print()
+
+    elif user_option == 6:
+        matrix1_rows, matrix1_cols = map(int, input("Enter size of second matrix: ").split(' '))
+        print("Enter matrix: ")
+
+        matrix1 = init_matrix(matrix1_rows)
+
+        if getMatrixDeternminant(matrix1) != 0:
+            res_matrix = getMatrixInverse(matrix1, matrix1_rows, matrix1_cols)
+            print_matrix(res_matrix, matrix1_rows, matrix1_cols)
+        else:
+            print("This matrix doesn't have an inverse.\n")
 
     elif user_option == 0:
         break
