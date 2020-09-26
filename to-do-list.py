@@ -1,31 +1,64 @@
-# To Do list project - stage 1/4
+# To Do list project - stage 2/4
+from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Column, Integer, String, Date
+from datetime import datetime
+from sqlalchemy.orm import sessionmaker
+from sys import exit
 
-class Task:
+Base = declarative_base()
 
-    def __init__(self):
-        self.tasks = []
+class Table(Base):
+    __tablename__ = 'task'
+    id = Column(Integer, primary_key=True)
+    task = Column(String)
+    deadline = Column(Date)
 
-    def add_task(self, task):
-        self.tasks.append(task)
+    def __repr__(self):
+        """
+                it will look like this format
+                id. task
+                id. task
+                id. task
+                """
+        return f"{self.id}. {self.task}"
 
-    def print_tasks(self):
-        pass
+class ToDoList:
 
-class SubTask(Task):
-    pass
+    def __init__(self, db_name):
+        # table and database initializing
+        self.engine = create_engine(f'sqlite:///{db_name}.db?check_same_thread=False')
+        Base.metadata.create_all(self.engine)
+        Session = sessionmaker(bind=self.engine)
+        # session initializing
+        self.session = Session()
 
+    def menu(self):
+        print("\n1) Today's tasks\n2) Add task\n0) Exit")
+        action = int(input())
+        if action == 1:
+            self.today_task()
+        elif action == 2:
+            self.add_task(input("\nEnter Task\n>"))
+        elif action == 0:
+            # It exits the session with a system exit. No need to terminate with flags.
+            print("\nBye!")
+            exit(1)
 
-t = Task()
-st = SubTask()
-print(type(st) == SubTask)
-print(isinstance(st, Task))
+    def today_task(self):
+        rows = self.session.query(Table).all()
+        if len(rows) == 0:
+            print("\nToday:\nNothing to do!")
+        else:
+            for row in rows:
+                print(f"{row.id}. {row.task}")
 
+    def add_task(self, task_name):
+        new_row = Table(task=task_name)
+        self.session.add(new_row)
+        self.session.commit()
+        print("The task has been added!")
 
-def print_tasks():
-    print("""Today:
-1) Do yoga
-2) Make breakfast
-3) Learn basics of SQL
-4) Learn what is ORM""")
-
-print_tasks()
+my_list = ToDoList("todo")
+while True:
+    my_list.menu()
